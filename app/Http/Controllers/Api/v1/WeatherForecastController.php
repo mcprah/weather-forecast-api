@@ -94,13 +94,13 @@ class WeatherForecastController extends BaseController
             if ($weatherForecastForCity == null) {
                 $this->create($city);
                 $response = $apiWeatherReport;
-                
+
                 $jsonResonse = json_decode(json_encode($response))->original;
                 $success = $jsonResonse->success;
 
-                if (!$success) {
+                // if (!$success) {
                     // return $this->sendError('Weather forecast data not available', []);
-                } 
+                // } 
                 // return new WeatherForecastResource($jsonResonse->data);
             } 
 
