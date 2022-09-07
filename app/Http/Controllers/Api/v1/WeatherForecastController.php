@@ -14,7 +14,12 @@ class WeatherForecastController extends BaseController
 
     public function index()
     {
-       
+        try {
+            $vehicleBrands = VehicleBrand::orderBy('name')->get();
+            return $vehicleBrands;
+        } catch (\Exception $e) {
+            return $this->sendError('Something went wrong :(', $e);
+        }
     }
 
     public function fetchThirdPartyApiForecast($city) {
@@ -60,7 +65,6 @@ class WeatherForecastController extends BaseController
             return $this->sendResponse($result, 'Weather forecast created');
 
         } catch (\Exception $e) {
-            return $e;
             return $this->sendError('Weather forecast data could not be saved', $e);
         }
     }
@@ -69,6 +73,11 @@ class WeatherForecastController extends BaseController
     {
         $city = $request->city;
         $response = $this->create($city);
+        $success =json_decode(json_encode($response))->original->success;
+
+        if (!$success) {
+            return $this->sendError('Weather forecast data not available', []);
+        } 
         return $response;
     }
 
@@ -79,7 +88,12 @@ class WeatherForecastController extends BaseController
             $weatherForecastForCity = WeatherForecast::where('city', $city)->paginate();
 
             if ($weatherForecastForCity->isEmpty()) {
-                $response = $this->create($city)->data;
+                $response = $this->create($city);
+                $success =json_decode(json_encode($response))->original->success;
+                
+                if (!$success) {
+                    return $this->sendError('Weather forecast data not available', []);
+                } 
                 return $response->paginate();
             } 
 
