@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\v1\WeatherForecastController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,5 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::resource('weather', WeatherController::class);
+    Route::resource('weather-forecast', WeatherForecastController::class);
 });
