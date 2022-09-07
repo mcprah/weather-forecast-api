@@ -11,7 +11,9 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
+        // $schedule->command('weather:check')->cron('* * * * *');
         $schedule->command('weather:check')->everySixHours();
+
     }
 
     protected function commands()

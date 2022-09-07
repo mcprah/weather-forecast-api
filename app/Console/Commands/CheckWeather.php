@@ -30,12 +30,13 @@ class CheckWeather extends Command
             
             foreach ($cities as  $city) {
                 $weatherForecastController->show($city);
+                info("...forecasted for " . $city);
             }
 
             info("Weather forecasting completed");
-    
+            
         } catch (\Exception $e) {
-            error_log($e);
+            info($e);
         }
 
     }
