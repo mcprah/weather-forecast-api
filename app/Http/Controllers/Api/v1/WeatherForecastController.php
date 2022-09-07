@@ -13,6 +13,7 @@ use App\Http\Resources\WeatherForecastResource;
 
 class WeatherForecastController extends BaseController
 {
+    public $apiWeatherReport;
 
     public function index()
     {
@@ -64,10 +65,11 @@ class WeatherForecastController extends BaseController
                 'coordinate_lat' => $weatherFromAPI->coord->lat,
             ]);
 
-            return $this->sendResponse($result, 'Weather forecast created');
+            $apiWeatherReport = $this->sendResponse($result, 'Weather forecast created');
+            // return $this->sendResponse($result, 'Weather forecast created');
 
         } catch (\Exception $e) {
-            return $this->sendError('Weather forecast data could not be saved', $e);
+            // return $this->sendError('Weather forecast data could not be saved', $e);
         }
     }
     
@@ -90,22 +92,22 @@ class WeatherForecastController extends BaseController
             $weatherForecastForCity = WeatherForecast::where('city', $city)->first();
 
             if ($weatherForecastForCity == null) {
-                $response = $this->create($city);
+                $this->create($city);
+                $response = $apiWeatherReport;
+                
                 $jsonResonse = json_decode(json_encode($response))->original;
                 $success = $jsonResonse->success;
 
                 if (!$success) {
-                    return $this->sendError('Weather forecast data not available', []);
+                    // return $this->sendError('Weather forecast data not available', []);
                 } 
-                return new WeatherForecastResource($jsonResonse->data);
+                // return new WeatherForecastResource($jsonResonse->data);
             } 
 
-            return  new WeatherForecastResource($weatherForecastForCity);
+            // return  new WeatherForecastResource($weatherForecastForCity);
 
         } catch (\Exception $e) {
-            return $e;
-            return $this->sendError('Something went wrong!', []);
-
+            // return $this->sendError('Something went wrong!', []);
         }
     }
 
