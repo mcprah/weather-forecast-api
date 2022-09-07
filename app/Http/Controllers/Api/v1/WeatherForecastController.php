@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 use App\Models\WeatherForecast;
+use App\Http\Resources\WeatherForecastResource;
+
 
 
 class WeatherForecastController extends BaseController
@@ -15,8 +17,8 @@ class WeatherForecastController extends BaseController
     public function index()
     {
         try {
-            $vehicleBrands = VehicleBrand::orderBy('name')->get();
-            return $vehicleBrands;
+            $weatherForecasts = WeatherForecast::orderBy('city')->paginate();
+            return WeatherForecastResource::collection($weatherForecasts);
         } catch (\Exception $e) {
             return $this->sendError('Something went wrong :(', $e);
         }
@@ -85,22 +87,24 @@ class WeatherForecastController extends BaseController
     public function show($city)
     {
         try {
-            $weatherForecastForCity = WeatherForecast::where('city', $city)->paginate();
+            $weatherForecastForCity = WeatherForecast::where('city', $city)->first();
 
-            if ($weatherForecastForCity->isEmpty()) {
+            if ($weatherForecastForCity == null) {
                 $response = $this->create($city);
-                $success =json_decode(json_encode($response))->original->success;
-                
+                $jsonResonse = json_decode(json_encode($response))->original;
+                $success = $jsonResonse->success;
+
                 if (!$success) {
                     return $this->sendError('Weather forecast data not available', []);
                 } 
-                return $response->paginate();
+                return new WeatherForecastResource($jsonResonse->data);
             } 
 
-            return  $weatherForecastForCity;
+            return  new WeatherForecastResource($weatherForecastForCity);
 
         } catch (\Exception $e) {
-            return $this->sendError('Weather forecast data not available', []);
+            return $e;
+            return $this->sendError('Something went wrong!', []);
 
         }
     }

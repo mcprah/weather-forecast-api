@@ -34,8 +34,5 @@ class WeatherForecast extends Model
         'coordinate_lat',
     ];
 
-    protected $hidden = [
-        'created_at',
-        'updated_at',
-    ];
+
 }
